@@ -11,4 +11,5 @@ RUN dotnet publish -c Release -o /app/out
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/out .
+ENV ASPNETCORE_URLS=http://+:8080
 ENTRYPOINT ["dotnet", "coffee shop.dll"]
