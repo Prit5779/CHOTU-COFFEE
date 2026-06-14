@@ -1,0 +1,1236 @@
+﻿@page
+@model coffee_shop.frontend.Index1Model
+@{
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — CHOTU COFFEE</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+            :root {
+                --sidebar-bg: #1C0A00;
+                --sidebar-w: 240px;
+                --gold: #D4A855;
+                --caramel: #C8822A;
+                --coffee: #3E2010;
+                --cream: #F5EFE1;
+                --bg: #F9F5EE;
+                --card: #FFFFFF;
+                --border: #EDE5D6;
+                --text: #1C1008;
+                --muted: #7A6050;
+                --success: #4CAF80;
+                --danger: #E05555;
+                --sans: 'DM Sans',sans-serif;
+            }
+
+            *, *::before, *::after {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: var(--sans);
+                background: var(--bg);
+                color: var(--text);
+                display: flex;
+                min-height: 100vh;
+            }
+
+            .sidebar {
+                width: var(--sidebar-w);
+                background: var(--sidebar-bg);
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                z-index: 50;
+            }
+
+            .sidebar-logo {
+                padding: 1.5rem 1.2rem;
+                border-bottom: 1px solid rgba(255,255,255,.06);
+            }
+
+                .sidebar-logo h1 {
+                    font-size: 1.1rem;
+                    color: var(--cream);
+                    font-weight: 400;
+                    letter-spacing: .02em;
+                }
+
+                .sidebar-logo small {
+                    color: rgba(255,255,255,.3);
+                    font-size: .7rem;
+                    letter-spacing: .15em;
+                    text-transform: uppercase;
+                }
+
+            .sidebar-nav {
+                flex: 1;
+                padding: 1rem 0;
+                overflow-y: auto;
+            }
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                gap: .85rem;
+                padding: .75rem 1.2rem;
+                color: rgba(255,255,255,.5);
+                cursor: pointer;
+                transition: all .2s;
+                font-size: .88rem;
+                font-weight: 500;
+                border-left: 3px solid transparent;
+            }
+
+                .nav-item:hover {
+                    color: var(--cream);
+                    background: rgba(255,255,255,.05);
+                }
+
+                .nav-item.active {
+                    color: var(--gold);
+                    background: rgba(212,168,85,.08);
+                    border-left-color: var(--gold);
+                }
+
+                .nav-item .icon {
+                    font-size: 1.1rem;
+                    width: 20px;
+                    text-align: center;
+                }
+
+            .sidebar-footer {
+                padding: 1rem 1.2rem;
+                border-top: 1px solid rgba(255,255,255,.06);
+            }
+
+            .logout-btn {
+                width: 100%;
+                padding: .65rem;
+                background: rgba(224,85,85,.15);
+                color: #E08080;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-family: var(--sans);
+                font-size: .83rem;
+                font-weight: 500;
+                transition: all .2s;
+            }
+
+                .logout-btn:hover {
+                    background: rgba(224,85,85,.25);
+                }
+
+            .main {
+                margin-left: var(--sidebar-w);
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .topbar {
+                background: var(--card);
+                border-bottom: 1px solid var(--border);
+                padding: .9rem 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                position: sticky;
+                top: 0;
+                z-index: 40;
+            }
+
+            .topbar-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: var(--text);
+            }
+
+            .topbar-right {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .admin-badge {
+                background: var(--caramel);
+                color: #fff;
+                padding: .35rem .9rem;
+                border-radius: 100px;
+                font-size: .78rem;
+                font-weight: 600;
+            }
+
+            .content {
+                padding: 2rem;
+                flex: 1;
+            }
+
+            .panel {
+                display: none;
+            }
+
+                .panel.active {
+                    display: block;
+                }
+
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
+                gap: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .stat-card {
+                background: var(--card);
+                border-radius: 10px;
+                padding: 1.2rem 1.5rem;
+                border: 1px solid var(--border);
+            }
+
+            .stat-card-label {
+                font-size: .75rem;
+                color: var(--muted);
+                text-transform: uppercase;
+                letter-spacing: .1em;
+                margin-bottom: .3rem;
+            }
+
+            .stat-card-val {
+                font-size: 2rem;
+                font-weight: 600;
+                color: var(--coffee);
+            }
+
+            .stat-card-sub {
+                font-size: .75rem;
+                color: var(--muted);
+                margin-top: .2rem;
+            }
+
+            .card {
+                background: var(--card);
+                border-radius: 10px;
+                border: 1px solid var(--border);
+                overflow: hidden;
+                margin-bottom: 1.5rem;
+            }
+
+            .card-head {
+                padding: 1rem 1.5rem;
+                border-bottom: 1px solid var(--border);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+
+                .card-head h3 {
+                    font-size: .95rem;
+                    font-weight: 600;
+                }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            th {
+                text-align: left;
+                font-size: .72rem;
+                letter-spacing: .1em;
+                text-transform: uppercase;
+                color: var(--muted);
+                padding: .75rem 1.5rem;
+                background: #FDFAF5;
+                border-bottom: 1px solid var(--border);
+            }
+
+            td {
+                padding: .85rem 1.5rem;
+                border-bottom: 1px solid #F5EFE5;
+                font-size: .87rem;
+            }
+
+            tr:last-child td {
+                border: none;
+            }
+
+            tr:hover td {
+                background: #FDFAF5;
+            }
+
+            .badge {
+                display: inline-block;
+                padding: .2rem .65rem;
+                border-radius: 100px;
+                font-size: .7rem;
+                font-weight: 600;
+            }
+
+            .customer-cell strong {
+                display: block;
+                font-weight: 600;
+                font-size: .87rem;
+                color: var(--text);
+            }
+
+            .customer-cell span {
+                font-size: .75rem;
+                color: var(--muted);
+                margin-top: .15rem;
+                display: block;
+            }
+
+            .table-num {
+                display: inline-block;
+                background: #F5EFE1;
+                color: var(--coffee);
+                font-weight: 600;
+                font-size: .75rem;
+                padding: .25rem .6rem;
+                border-radius: 6px;
+            }
+
+            .summary-bar {
+                display: flex;
+                gap: .75rem;
+                margin-bottom: 1.25rem;
+                flex-wrap: wrap;
+            }
+
+            .summary-chip {
+                background: var(--card);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: .6rem 1rem;
+                display: flex;
+                align-items: center;
+                gap: .6rem;
+                min-width: 110px;
+            }
+
+                .summary-chip .chip-val {
+                    font-size: 1.3rem;
+                    font-weight: 600;
+                    color: var(--coffee);
+                    line-height: 1;
+                }
+
+                .summary-chip .chip-label {
+                    font-size: .7rem;
+                    text-transform: uppercase;
+                    letter-spacing: .08em;
+                    color: var(--muted);
+                    margin-top: .15rem;
+                }
+
+                .summary-chip .chip-dot {
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    flex-shrink: 0;
+                }
+
+            .badge span.badge-dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                display: inline-block;
+                background: currentColor;
+                opacity: .8;
+            }
+
+            .badge-green {
+                background: #E8F5EE;
+                color: #2D7A4F;
+            }
+
+            .badge-orange {
+                background: #FFF3E5;
+                color: #B06010;
+            }
+
+            .badge-red {
+                background: #FEE8E8;
+                color: #C03030;
+            }
+
+            .badge-blue {
+                background: #E8F0FE;
+                color: #1967D2;
+            }
+
+            .badge-purple {
+                background: #F3E8FF;
+                color: #7B2FBE;
+            }
+
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                gap: .4rem;
+                padding: .55rem 1.1rem;
+                border-radius: 6px;
+                font-family: var(--sans);
+                font-size: .82rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all .2s;
+                border: none;
+            }
+
+            .btn-primary {
+                background: var(--caramel);
+                color: #fff;
+            }
+
+                .btn-primary:hover {
+                    background: var(--coffee);
+                }
+
+            .btn-sm {
+                padding: .35rem .8rem;
+                font-size: .78rem;
+            }
+
+            .btn-danger {
+                background: #FEE8E8;
+                color: var(--danger);
+            }
+
+                .btn-danger:hover {
+                    background: var(--danger);
+                    color: #fff;
+                }
+
+            .btn-success {
+                background: #E8F5EE;
+                color: var(--success);
+            }
+
+                .btn-success:hover {
+                    background: var(--success);
+                    color: #fff;
+                }
+
+            .btn-outline {
+                background: transparent;
+                border: 1px solid var(--border);
+                color: var(--muted);
+            }
+
+                .btn-outline:hover {
+                    border-color: var(--caramel);
+                    color: var(--caramel);
+                }
+
+            .btn-blue {
+                background: #E8F0FE;
+                color: #1967D2;
+            }
+
+                .btn-blue:hover {
+                    background: #1967D2;
+                    color: #fff;
+                }
+
+            .modal-backdrop {
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,.45);
+                z-index: 200;
+                display: none;
+                align-items: flex-start;
+                justify-content: center;
+                padding: 2.5rem 1rem 1rem;
+            }
+
+                .modal-backdrop.open {
+                    display: flex;
+                }
+
+            .modal {
+                background: var(--card);
+                border-radius: 12px;
+                width: 100%;
+                max-width: 520px;
+                max-height: calc(100vh - 5rem);
+                overflow: auto;
+                box-shadow: 0 10px 30px rgba(0,0,0,.25);
+            }
+
+            .modal-head {
+                padding: 1.2rem 1.5rem;
+                border-bottom: 1px solid var(--border);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+                .modal-head h3 {
+                    font-size: 1rem;
+                    font-weight: 600;
+                }
+
+            .modal-close {
+                background: none;
+                border: none;
+                font-size: 1.4rem;
+                cursor: pointer;
+                color: var(--muted);
+            }
+
+            .modal-body {
+                padding: 1.2rem;
+                display: flex;
+                flex-direction: column;
+                gap: .8rem;
+            }
+
+                .modal-body label {
+                    font-size: .78rem;
+                    color: var(--muted);
+                    text-transform: uppercase;
+                    letter-spacing: .08em;
+                    display: block;
+                    margin-bottom: .3rem;
+                }
+
+                .modal-body input, .modal-body select, .modal-body textarea {
+                    width: 100%;
+                    padding: .7rem .9rem;
+                    border: 1px solid var(--border);
+                    border-radius: 6px;
+                    font-family: var(--sans);
+                    font-size: .9rem;
+                    outline: none;
+                    transition: border-color .2s;
+                }
+
+                    .modal-body input:focus, .modal-body select:focus, .modal-body textarea:focus {
+                        border-color: var(--caramel);
+                    }
+
+                .modal-body textarea {
+                    height: 90px;
+                    resize: vertical;
+                }
+
+            .modal-footer {
+                padding: 1rem 1.5rem;
+                border-top: 1px solid var(--border);
+                display: flex;
+                justify-content: flex-end;
+                gap: .7rem;
+            }
+
+            .form-row-2 {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+
+            #toast {
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                background: var(--coffee);
+                color: var(--cream);
+                padding: .85rem 1.4rem;
+                border-radius: 8px;
+                font-size: .87rem;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity .3s;
+                z-index: 999;
+            }
+
+                #toast.show {
+                    opacity: 1;
+                }
+
+            #loginScreen {
+                position: fixed;
+                inset: 0;
+                background: var(--sidebar-bg);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 999;
+            }
+
+            .login-box {
+                background: var(--card);
+                border-radius: 12px;
+                padding: 2.5rem;
+                width: 100%;
+                max-width: 380px;
+            }
+
+                .login-box h2 {
+                    font-size: 1.5rem;
+                    margin-bottom: .3rem;
+                }
+
+                .login-box p {
+                    color: var(--muted);
+                    font-size: .87rem;
+                    margin-bottom: 2rem;
+                }
+
+            .login-form {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+                .login-form label {
+                    font-size: .78rem;
+                    color: var(--muted);
+                    text-transform: uppercase;
+                    letter-spacing: .08em;
+                }
+
+                .login-form input {
+                    width: 100%;
+                    padding: .8rem 1rem;
+                    border: 1px solid var(--border);
+                    border-radius: 8px;
+                    font-family: var(--sans);
+                    font-size: .95rem;
+                    outline: none;
+                    margin-top: .3rem;
+                }
+
+                    .login-form input:focus {
+                        border-color: var(--caramel);
+                    }
+
+                .login-form button {
+                    background: var(--caramel);
+                    color: #fff;
+                    border: none;
+                    padding: .9rem;
+                    border-radius: 8px;
+                    font-family: var(--sans);
+                    font-size: .95rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    margin-top: .5rem;
+                }
+
+            .login-err {
+                color: var(--danger);
+                font-size: .83rem;
+                text-align: center;
+            }
+
+            .order-status-select {
+                padding: .3rem .6rem;
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                font-family: var(--sans);
+                font-size: .78rem;
+                outline: none;
+                cursor: pointer;
+                background: var(--card);
+            }
+
+            .filter-tabs {
+                display: flex;
+                gap: .5rem;
+                flex-wrap: wrap;
+            }
+
+            .filter-tab {
+                padding: .4rem 1rem;
+                border: 1px solid var(--border);
+                background: transparent;
+                border-radius: 100px;
+                font-family: var(--sans);
+                font-size: .75rem;
+                cursor: pointer;
+                color: var(--muted);
+                transition: all .2s;
+            }
+
+                .filter-tab.active, .filter-tab:hover {
+                    background: var(--caramel);
+                    color: #fff;
+                    border-color: var(--caramel);
+                }
+    </style>
+</head>
+<body>
+
+    <div id="loginScreen">
+        <div class="login-box">
+            <h2>Admin Login</h2>
+            <p>CHOTU COFFEE Dashboard</p>
+            <div class="login-form">
+                <div><label>Username</label><input type="text" id="loginUser" placeholder="admin"></div>
+                <div><label>Password</label><input type="password" id="loginPass" placeholder="••••••••"></div>
+                <p class="login-err" id="loginErr"></p>
+                <button onclick="doLogin()">Login →</button>
+            </div>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h1>CHOTU COFFEE</h1>
+            <small>Admin Dashboard</small>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-item active" onclick="switchPanel('dashboard')"><span class="icon">📊</span> Dashboard</div>
+            <div class="nav-item" onclick="switchPanel('orders')"><span class="icon">🛒</span> Orders <span id="pendingBadge" style="background:var(--danger);color:#fff;font-size:.65rem;padding:.1rem .45rem;border-radius:100px;margin-left:auto;display:none"></span></div>
+            <div class="nav-item" onclick="switchPanel('menu')"><span class="icon">☕</span> Menu Items</div>
+            <div class="nav-item" onclick="switchPanel('team')"><span class="icon">👥</span> Team</div>
+            <div class="nav-item" onclick="switchPanel('gallery')"><span class="icon">🖼</span> Gallery</div>
+            <div class="nav-item" onclick="switchPanel('messages')"><span class="icon">✉️</span> Messages <span id="unreadBadge" style="background:var(--danger);color:#fff;font-size:.65rem;padding:.1rem .45rem;border-radius:100px;margin-left:auto;display:none"></span></div>
+            <div class="nav-item" onclick="switchPanel('reviews')"><span class="icon">⭐</span> Reviews</div>
+            <div class="nav-item" onclick="switchPanel('users')"><span class="icon">👤</span> Users <span id="usersBadge" style="background:var(--success);color:#fff;font-size:.65rem;padding:.1rem .45rem;border-radius:100px;margin-left:auto;display:none"></span></div>
+            <div class="nav-item" onclick="switchPanel('settings')"><span class="icon">⚙️</span> Settings</div>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="logout-btn" onclick="logout()">⟵ Logout</button>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <span class="topbar-title" id="topbarTitle">Dashboard</span>
+            <div class="topbar-right">
+                <a href="/" target="_blank" style="font-size:.83rem;color:var(--muted);text-decoration:none;">View Site ↗</a>
+                <span class="admin-badge">Admin</span>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <!-- ══ DASHBOARD ══════════════════════════ -->
+            <div class="panel active" id="panel-dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-card-label">Menu Items</div><div class="stat-card-val" id="st-menu">—</div></div>
+                    <div class="stat-card"><div class="stat-card-label">Team Members</div><div class="stat-card-val" id="st-team">—</div></div>
+                    <div class="stat-card"><div class="stat-card-label">Pending Orders</div><div class="stat-card-val" id="st-orders">—</div></div>
+                    <div class="stat-card"><div class="stat-card-label">Unread Messages</div><div class="stat-card-val" id="st-msg">—</div></div>
+                    <div class="stat-card"><div class="stat-card-label">Pending Reviews</div><div class="stat-card-val" id="st-rev">—</div></div>
+                    <div class="stat-card"><div class="stat-card-label">Total Users</div><div class="stat-card-val" id="st-users">—</div><div class="stat-card-sub" id="st-users-today"></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-head"><h3>Recent Orders</h3><button class="btn btn-outline btn-sm" onclick="switchPanel('orders')">View All</button></div>
+                    <table>
+                        <thead><tr><th>Customer</th><th>Table</th><th>Items</th><th>Amount</th><th>Status</th><th>Time</th></tr></thead>
+                        <tbody id="dash-orders"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">Loading…</td></tr></tbody>
+                    </table>
+                </div>
+                <div class="card">
+                    <div class="card-head"><h3>Recent Messages</h3><button class="btn btn-outline btn-sm" onclick="switchPanel('messages')">View All</button></div>
+                    <table>
+                        <thead><tr><th>Name</th><th>Email</th><th>Subject</th><th>Date</th><th>Status</th></tr></thead>
+                        <tbody id="dash-msgs"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem">Loading…</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ══ ORDERS ══════════════════════════════ -->
+            <!-- ══ ORDERS ══════════════════════════════ -->
+            <div class="panel" id="panel-orders">
+                <div class="summary-bar" id="ordersSummaryBar">
+                    <div class="summary-chip"><span class="chip-dot" style="background:#B06010"></span><div><div class="chip-val" id="cnt-pending">—</div><div class="chip-label">Pending</div></div></div>
+                    <div class="summary-chip"><span class="chip-dot" style="background:#1967D2"></span><div><div class="chip-val" id="cnt-preparing">—</div><div class="chip-label">Preparing</div></div></div>
+                    <div class="summary-chip"><span class="chip-dot" style="background:#2D7A4F"></span><div><div class="chip-val" id="cnt-served">—</div><div class="chip-label">Served</div></div></div>
+                    <div class="summary-chip"><span class="chip-dot" style="background:#C03030"></span><div><div class="chip-val" id="cnt-cancelled">—</div><div class="chip-label">Cancelled</div></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-head">
+                        <h3>Customer Orders</h3>
+                        <div class="filter-tabs">
+                            <button class="filter-tab active" onclick="filterOrders('',this)">All</button>
+                            <button class="filter-tab" onclick="filterOrders('Pending',this)">Pending</button>
+                            <button class="filter-tab" onclick="filterOrders('Preparing',this)">Preparing</button>
+                            <button class="filter-tab" onclick="filterOrders('Served',this)">Served</button>
+                            <button class="filter-tab" onclick="filterOrders('Cancelled',this)">Cancelled</button>
+                        </div>
+                        <button class="btn btn-outline btn-sm" onclick="loadOrdersTable()">↻ Refresh</button>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead><tr><th>Customer</th><th>Table</th><th>Items</th><th>Amount</th><th>Notes</th><th>Time</th><th>Status</th><th>Update</th></tr></thead>
+                            <tbody id="ordersTable"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem">Loading…</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ MENU ════════════════════════════════ -->
+            <div class="panel" id="panel-menu">
+                <div class="card">
+                    <div class="card-head"><h3>Menu Items</h3><button class="btn btn-primary btn-sm" onclick="openMenuModal()">+ Add Item</button></div>
+                    <table>
+                        <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Featured</th><th>Actions</th></tr></thead>
+                        <tbody id="menuTable"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem">Loading…</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ══ TEAM ════════════════════════════════ -->
+            <div class="panel" id="panel-team">
+                <div class="card">
+                    <div class="card-head"><h3>Team Members</h3><button class="btn btn-primary btn-sm" onclick="openTeamModal()">+ Add Member</button></div>
+                    <table>
+                        <thead><tr><th>Name</th><th>Role</th><th>Bio</th><th>Actions</th></tr></thead>
+                        <tbody id="teamTable"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:2rem">Loading…</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ══ GALLERY ═════════════════════════════ -->
+            <div class="panel" id="panel-gallery">
+                <div class="card">
+                    <div class="card-head"><h3>Gallery Images</h3><button class="btn btn-primary btn-sm" onclick="openGalleryModal()">+ Add Image</button></div>
+                    <table>
+                        <thead><tr><th>Title</th><th>Category</th><th>Image URL</th><th>Actions</th></tr></thead>
+                        <tbody id="galleryTable"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:2rem">Loading…</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ══ MESSAGES ════════════════════════════ -->
+            <div class="panel" id="panel-messages">
+                <div class="card">
+                    <div class="card-head"><h3>Contact Messages</h3></div>
+                    <table>
+                        <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Subject</th><th>Date</th><th>Action</th></tr></thead>
+                        <tbody id="messagesTable"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">Loading…</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ══ REVIEWS ═════════════════════════════ -->
+            <div class="panel" id="panel-reviews">
+                <div class="card">
+                    <div class="card-head"><h3>Pending Reviews</h3></div>
+                    <table>
+                        <thead><tr><th>Customer</th><th>Review</th><th>Rating</th><th>Date</th><th>Actions</th></tr></thead>
+                        <tbody id="reviewsTable"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem">Loading…</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ══ USERS ═══════════════════════════════ -->
+            <div class="panel" id="panel-users">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-card-label">Total Users</div><div class="stat-card-val" id="u-total">—</div></div>
+                    <div class="stat-card"><div class="stat-card-label">Verified</div><div class="stat-card-val" id="u-verified">—</div></div>
+                    <div class="stat-card"><div class="stat-card-label">Joined Today</div><div class="stat-card-val" id="u-today">—</div></div>
+                </div>
+                <div class="card">
+                    <div class="card-head">
+                        <h3>Registered Users</h3>
+                        <div style="display:flex;gap:.5rem;align-items:center">
+                            <input id="userSearch" placeholder="Search name/email/phone..." style="padding:.45rem .8rem;border:1px solid var(--border);border-radius:6px;font-family:var(--sans);font-size:.82rem;outline:none;width:220px">
+                            <button class="btn btn-outline btn-sm" onclick="loadUsersTable()">Search</button>
+                        </div>
+                        <button class="btn btn-outline btn-sm" onclick="loadUsersTable()">↻ Refresh</button>
+                    </div>
+                    <table>
+                        <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+                        <tbody id="usersTable"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">Loading…</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ══ SETTINGS ════════════════════════════ -->
+            <div class="panel" id="panel-settings">
+                <div class="card">
+                    <div class="card-head"><h3>Site Settings</h3></div>
+                    <div style="padding:1.5rem;display:flex;flex-direction:column;gap:1.2rem" id="settingsForm"></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Menu Modal -->
+    <div class="modal-backdrop" id="menuModal">
+        <div class="modal">
+            <div class="modal-head"><h3 id="menuModalTitle">Add Menu Item</h3><button class="modal-close" onclick="closeModal('menuModal')">×</button></div>
+            <div class="modal-body">
+                <input type="hidden" id="mi-id">
+                <div><label>Name</label><input id="mi-name" placeholder="e.g. Cortado"></div>
+                <div><label>Category</label><select id="mi-cat"></select></div>
+                <div class="form-row-2">
+                    <div><label>Price (₹)</label><input id="mi-price" type="number" step="0.01" placeholder="150"></div>
+                    <div><label>Available?</label><select id="mi-avail"><option value="true">Yes</option><option value="false">No</option></select></div>
+                </div>
+                <div><label>Description</label><textarea id="mi-desc" placeholder="Brief description…"></textarea></div>
+                <div><label>Image URL</label><input id="mi-img" placeholder="https://…"></div>
+                <div><label>Featured?</label><select id="mi-feat"><option value="false">No</option><option value="true">Yes — Signature Item</option></select></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('menuModal')">Cancel</button><button class="btn btn-primary" onclick="saveMenuItem()">Save</button></div>
+        </div>
+    </div>
+
+    <!-- Team Modal -->
+    <div class="modal-backdrop" id="teamModal">
+        <div class="modal">
+            <div class="modal-head"><h3>Add Team Member</h3><button class="modal-close" onclick="closeModal('teamModal')">×</button></div>
+            <div class="modal-body">
+                <div><label>Name</label><input id="tm-name" placeholder="Full name"></div>
+                <div><label>Role</label><input id="tm-role" placeholder="e.g. Head Barista"></div>
+                <div><label>Bio</label><textarea id="tm-bio" placeholder="Short bio…"></textarea></div>
+                <div><label>Photo URL</label><input id="tm-img" placeholder="https://…"></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('teamModal')">Cancel</button><button class="btn btn-primary" onclick="saveTeamMember()">Save</button></div>
+        </div>
+    </div>
+
+    <!-- Gallery Modal -->
+    <div class="modal-backdrop" id="galleryModal">
+        <div class="modal">
+            <div class="modal-head"><h3>Add Gallery Image</h3><button class="modal-close" onclick="closeModal('galleryModal')">×</button></div>
+            <div class="modal-body">
+                <div><label>Image URL</label><input id="g-img" placeholder="https://…"></div>
+                <div><label>Or upload file</label><input id="g-file" type="file" accept="image/*"></div>
+                <div style="display:flex;gap:.5rem;margin-top:.3rem"><button class="btn btn-outline btn-sm" onclick="uploadGalleryFile()">Upload</button><span id="uploadStatus" style="align-self:center;color:var(--muted)"></span></div>
+                <div><label>Title (optional)</label><input id="g-title" placeholder="Coffee art…"></div>
+                <div><label>Category</label><input id="g-cat" placeholder="Drinks / Food / Interior"></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('galleryModal')">Cancel</button><button class="btn btn-primary" onclick="saveGalleryItem()">Save</button></div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal-backdrop" id="userModal">
+        <div class="modal">
+            <div class="modal-head"><h3>Edit User</h3><button class="modal-close" onclick="closeModal('userModal')">×</button></div>
+            <div class="modal-body">
+                <input type="hidden" id="u-id">
+                <div><label>Name</label><input id="u-name" placeholder="Full name"></div>
+                <div class="form-row-2">
+                    <div><label>Email</label><input id="u-email" type="email" placeholder="email@example.com"></div>
+                    <div><label>Phone</label><input id="u-phone" placeholder="+91 98765 43210"></div>
+                </div>
+                <div>
+                    <label>Verified?</label>
+                    <select id="u-verified-sel">
+                        <option value="true">Yes — Verified</option>
+                        <option value="false">No — Unverified</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('userModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveUser()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+            const API = window.location.origin + '/api';
+            let TOKEN = '';
+            let categories = [];
+
+            // ── AUTH ────────────────────────────────────
+            async function doLogin() {
+                const u = document.getElementById('loginUser').value;
+                const p = document.getElementById('loginPass').value;
+                try {
+                    const r = await fetch(`${API}/auth/login`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+                    if (r.status===401){document.getElementById('loginErr').textContent='Invalid credentials.';return;}
+                    if (!r.ok){document.getElementById('loginErr').textContent='Server error.';return;}
+                    const d = await r.json();
+                    if (d?.success){TOKEN=d.data;document.getElementById('loginScreen').style.display='none';initDashboard();}
+                    else document.getElementById('loginErr').textContent=d?.message??'Invalid credentials.';
+                } catch {document.getElementById('loginErr').textContent='Network error.';}
+            }
+            function logout(){TOKEN='';location.reload();}
+
+            // ── API ─────────────────────────────────────
+            async function authFetch(path,opts={}){
+                const headers={'Content-Type':'application/json','Authorization':`Bearer ${TOKEN}`,...opts.headers};
+                const r=await fetch(`${API}${path}`,{...opts,headers});
+                return r.json();
+            }
+            async function pubFetch(path){
+                try{const r=await fetch(`${API}${path}`);return r.json();}catch{return null;}
+            }
+
+            // ── PANEL NAV ───────────────────────────────
+            function switchPanel(name){
+                document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+                document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+                document.getElementById('panel-'+name).classList.add('active');
+                document.querySelector(`[onclick="switchPanel('${name}')"]`).classList.add('active');
+                document.getElementById('topbarTitle').textContent=name.charAt(0).toUpperCase()+name.slice(1);
+                const loaders={orders:loadOrdersTable,users:loadUsersTable,menu:loadMenuTable,team:loadTeamTable,gallery:loadGalleryTable,messages:loadMessages,reviews:loadReviews,settings:loadSettings};
+                if(loaders[name])loaders[name]();
+            }
+
+            // ── TOAST ───────────────────────────────────
+            function toast(msg){
+                const t=document.getElementById('toast');
+                t.textContent=msg;t.classList.add('show');
+                setTimeout(()=>t.classList.remove('show'),2800);
+            }
+
+            // ── MODAL ───────────────────────────────────
+            function closeModal(id){document.getElementById(id).classList.remove('open');}
+            function openModal(id){document.getElementById(id).classList.add('open');}
+
+            // ── DASHBOARD ───────────────────────────────
+            async function initDashboard(){
+                const [menu,team,msgs,revs,orders,cats,userStats]=await Promise.all([
+                    pubFetch('/menu/items'),
+                    pubFetch('/team'),
+                    authFetch('/contact?unread=true'),
+                    authFetch('/testimonials/pending'),
+                    authFetch('/orders?status=Pending'),
+                    pubFetch('/menu/categories'),
+                    authFetch('/users/stats')
+                ]);
+                categories=cats?.data||[];
+                document.getElementById('st-menu').textContent   = menu?.data?.length||0;
+                document.getElementById('st-team').textContent   = team?.data?.length||0;
+                document.getElementById('st-msg').textContent    = msgs?.data?.length||0;
+                document.getElementById('st-rev').textContent    = revs?.data?.length||0;
+                const pc=orders?.data?.length||0;
+                document.getElementById('st-orders').textContent = pc;
+                if(pc>0){const b=document.getElementById('pendingBadge');b.textContent=pc;b.style.display='inline';}
+                if(msgs?.data?.length){document.getElementById('unreadBadge').textContent=msgs.data.length;document.getElementById('unreadBadge').style.display='inline';}
+                if(userStats?.data){
+                    document.getElementById('st-users').textContent=userStats.data.total;
+                    document.getElementById('st-users-today').textContent='+'+userStats.data.today+' today';
+                    if(userStats.data.total>0){document.getElementById('usersBadge').textContent=userStats.data.total;document.getElementById('usersBadge').style.display='inline';}
+                }
+                // Recent Orders
+                const oList=orders?.data?.slice(0,5)||[];
+                document.getElementById('dash-orders').innerHTML=oList.length
+                    ?oList.map(o=>`<tr><td><strong>${o.customerName}</strong></td><td>${o.tableNumber||'—'}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.items}</td><td>₹${o.totalAmount}</td><td>${statusBadge(o.status)}</td><td>${timeAgo(o.createdAt)}</td></tr>`).join('')
+                    :'<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:1.5rem">No pending orders</td></tr>';
+                // Recent Messages
+                const mList=msgs?.data?.slice(0,5)||[];
+                document.getElementById('dash-msgs').innerHTML=mList.length
+                    ?mList.map(m=>`<tr><td>${m.name}</td><td>${m.email}</td><td>${m.subject||'—'}</td><td>${new Date(m.createdAt).toLocaleDateString()}</td><td><span class="badge ${m.isRead?'badge-green':'badge-orange'}">${m.isRead?'Read':'New'}</span></td></tr>`).join('')
+                    :'<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:1.5rem">No messages</td></tr>';
+            }
+
+            // ── HELPERS ─────────────────────────────────
+                        function statusBadge(s){
+                const m = {
+                    Pending:  'badge-orange',
+                    Preparing:'badge-blue',
+                    Served:   'badge-green',
+                    Cancelled:'badge-red'
+                };
+                return `<span class="badge ${m[s]||'badge-orange'}"><span class="badge-dot"></span>${s}</span>`;
+            }
+            function timeAgo(dt){const d=Math.floor((new Date()-new Date(dt))/60000);if(d<1)return 'Just now';if(d<60)return d+'m ago';return Math.floor(d/60)+'h ago';}
+
+            // ── ORDERS ──────────────────────────────────
+            let currentOrderFilter='';
+                        async function loadOrdersTable(){
+                const path = currentOrderFilter ? `/orders?status=${currentOrderFilter}` : '/orders';
+                const d = await authFetch(path);
+                const orders = d?.data || [];
+
+                // Summary chips — sirf All view ma update thay
+                if(!currentOrderFilter){
+                    const counts = {Pending:0, Preparing:0, Served:0, Cancelled:0};
+                    orders.forEach(o => { if(counts[o.status] !== undefined) counts[o.status]++; });
+                    document.getElementById('cnt-pending').textContent   = counts.Pending;
+                    document.getElementById('cnt-preparing').textContent = counts.Preparing;
+                    document.getElementById('cnt-served').textContent    = counts.Served;
+                    document.getElementById('cnt-cancelled').textContent = counts.Cancelled;
+                }
+
+                document.getElementById('ordersTable').innerHTML = orders.length
+                    ? orders.map(o => `
+                        <tr>
+                            <td>
+                                <div class="customer-cell">
+                                    <strong>${o.customerName}</strong>
+                                    <span>${o.customerPhone || '—'}</span>
+                                </div>
+                            </td>
+                            <td><span class="table-num">${o.tableNumber ? 'T-'+o.tableNumber : '—'}</span></td>
+                            <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:.8rem" title="${o.items}">${o.items}</td>
+                            <td style="font-weight:600;color:var(--coffee);white-space:nowrap">₹${o.totalAmount}</td>
+                            <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:.78rem" title="${o.notes||''}">${o.notes || '—'}</td>
+                            <td style="white-space:nowrap;font-size:.78rem;color:var(--muted)">${timeAgo(o.createdAt)}</td>
+                            <td>${statusBadge(o.status)}</td>
+                            <td>
+                                <select class="order-status-select" onchange="updateOrderStatus(${o.id},this.value)">
+                                    <option ${o.status==='Pending'   ?'selected':''}>Pending</option>
+                                    <option ${o.status==='Preparing' ?'selected':''}>Preparing</option>
+                                    <option ${o.status==='Served'    ?'selected':''}>Served</option>
+                                    <option ${o.status==='Cancelled' ?'selected':''}>Cancelled</option>
+                                </select>
+                            </td>
+                        </tr>`).join('')
+                    : `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem">No orders found</td></tr>`;
+            }
+            function filterOrders(status,btn){currentOrderFilter=status;document.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');loadOrdersTable();}
+            async function updateOrderStatus(id,status){await authFetch(`/orders/${id}/status`,{method:'PUT',body:JSON.stringify(status)});toast('✓ Status → '+status);loadOrdersTable();}
+
+            // ── MENU ────────────────────────────────────
+            async function loadMenuTable(){
+                const d=await pubFetch('/menu/items');
+                const cats=await pubFetch('/menu/categories');
+                categories=cats?.data||[];
+                const items=d?.data||[];
+                document.getElementById('menuTable').innerHTML=items.map(i=>`<tr><td><strong>${i.name}</strong></td><td>${i.categoryName}</td><td>₹${i.price}</td><td>${i.isFeatured?'<span class="badge badge-orange">Yes</span>':'—'}</td><td style="display:flex;gap:.5rem"><button class="btn btn-sm btn-outline" data-item='${JSON.stringify(i).replace(/'/g,"&#39;")}' onclick="editMenuItem(this)">Edit</button><button class="btn btn-sm btn-danger" onclick="deleteMenuItem(${i.id})">Delete</button></td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:1.5rem">No items</td></tr>';
+            }
+            function openMenuModal(item){
+                document.getElementById('menuModalTitle').textContent=item?'Edit Menu Item':'Add Menu Item';
+                document.getElementById('mi-id').value=item?.id||'';
+                document.getElementById('mi-name').value=item?.name||'';
+                document.getElementById('mi-price').value=item?.price||'';
+                document.getElementById('mi-desc').value=item?.description||'';
+                document.getElementById('mi-img').value=item?.imageUrl||'';
+                document.getElementById('mi-avail').value=item?.isAvailable!==false?'true':'false';
+                document.getElementById('mi-feat').value=item?.isFeatured?'true':'false';
+                const sel=document.getElementById('mi-cat');
+                sel.innerHTML=categories.map(c=>`<option value="${c.id}" ${item?.categoryId==c.id?'selected':''}>${c.name}</option>`).join('');
+                openModal('menuModal');
+            }
+            function editMenuItem(btn){openMenuModal(JSON.parse(btn.getAttribute('data-item')));}
+            async function saveMenuItem(){
+                const id=document.getElementById('mi-id').value;
+                const body={categoryId:+document.getElementById('mi-cat').value,name:document.getElementById('mi-name').value,description:document.getElementById('mi-desc').value,price:+document.getElementById('mi-price').value,imageUrl:document.getElementById('mi-img').value,isAvailable:document.getElementById('mi-avail').value==='true',isFeatured:document.getElementById('mi-feat').value==='true'};
+                await authFetch(id?`/menu/items/${id}`:'/menu/items',{method:id?'PUT':'POST',body:JSON.stringify(body)});
+                closeModal('menuModal');loadMenuTable();toast('✓ Menu item saved');
+            }
+            async function deleteMenuItem(id){if(!confirm('Delete?'))return;await authFetch(`/menu/items/${id}`,{method:'DELETE'});loadMenuTable();toast('✓ Deleted');}
+
+            // ── TEAM ────────────────────────────────────
+            async function loadTeamTable(){
+                const d=await pubFetch('/team');
+                document.getElementById('teamTable').innerHTML=(d?.data||[]).map(m=>`<tr><td><strong>${m.name}</strong></td><td>${m.role||'—'}</td><td style="max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.bio||'—'}</td><td><button class="btn btn-sm btn-danger" onclick="deleteTeam(${m.id})">Remove</button></td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:1.5rem">No members</td></tr>';
+            }
+            function openTeamModal(){openModal('teamModal');}
+            async function saveTeamMember(){
+                const body={name:document.getElementById('tm-name').value,role:document.getElementById('tm-role').value,bio:document.getElementById('tm-bio').value,imageUrl:document.getElementById('tm-img').value};
+                await authFetch('/team',{method:'POST',body:JSON.stringify(body)});
+                closeModal('teamModal');loadTeamTable();toast('✓ Team member added');
+            }
+            async function deleteTeam(id){if(!confirm('Remove?'))return;await authFetch(`/team/${id}`,{method:'DELETE'});loadTeamTable();toast('✓ Removed');}
+
+            // ── GALLERY ─────────────────────────────────
+            async function loadGalleryTable(){
+                const d=await pubFetch('/gallery');
+                document.getElementById('galleryTable').innerHTML=(d?.data||[]).map(g=>`<tr><td>${g.title||'—'}</td><td>${g.category||'—'}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${g.imageUrl}</td><td><button class="btn btn-sm btn-danger" onclick="deleteGallery(${g.id})">Remove</button></td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:1.5rem">No images</td></tr>';
+            }
+            function openGalleryModal(){openModal('galleryModal');}
+            async function saveGalleryItem(){
+                const body={imageUrl:document.getElementById('g-img').value,title:document.getElementById('g-title').value,category:document.getElementById('g-cat').value};
+                await authFetch('/gallery',{method:'POST',body:JSON.stringify(body)});
+                closeModal('galleryModal');loadGalleryTable();toast('✓ Image added');
+            }
+            async function uploadGalleryFile(){
+                const f=document.getElementById('g-file').files[0];
+                if(!f){document.getElementById('uploadStatus').textContent='No file selected';return;}
+                document.getElementById('uploadStatus').textContent='Uploading…';
+                const fd=new FormData();fd.append('file',f);
+                try{
+                    const r=await fetch(`${API}/gallery/upload`,{method:'POST',headers:{'Authorization':`Bearer ${TOKEN}`},body:fd});
+                    const d=await r.json();
+                    if(d?.success){document.getElementById('g-img').value=d.data;document.getElementById('uploadStatus').textContent='Uploaded ✓';}
+                    else document.getElementById('uploadStatus').textContent=d?.message||'Upload failed';
+                }catch{document.getElementById('uploadStatus').textContent='Upload error';}
+            }
+            async function deleteGallery(id){if(!confirm('Remove?'))return;await authFetch(`/gallery/${id}`,{method:'DELETE'});loadGalleryTable();toast('✓ Removed');}
+
+            // ── MESSAGES ────────────────────────────────
+            async function loadMessages(){
+                const d=await authFetch('/contact');
+                document.getElementById('messagesTable').innerHTML=(d?.data||[]).map(m=>`<tr style="${!m.isRead?'font-weight:600':''}"><td>${m.name}</td><td>${m.email}</td><td>${m.phone||'—'}</td><td>${m.subject||'—'}</td><td>${new Date(m.createdAt).toLocaleDateString()}</td><td>${!m.isRead?`<button class="btn btn-sm btn-success" onclick="markRead(${m.id})">Mark Read</button>`:'<span class="badge badge-green">Read</span>'}</td></tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:1.5rem">No messages</td></tr>';
+            }
+            async function markRead(id){await authFetch(`/contact/${id}/read`,{method:'PUT'});loadMessages();toast('✓ Marked as read');}
+
+            // ── REVIEWS ─────────────────────────────────
+            async function loadReviews(){
+                const d=await authFetch('/testimonials/pending');
+                document.getElementById('reviewsTable').innerHTML=(d?.data||[]).map(r=>`<tr><td>${r.customerName}</td><td style="max-width:300px">${r.review}</td><td>${'★'.repeat(r.rating)}</td><td>${new Date(r.createdAt).toLocaleDateString()}</td><td style="display:flex;gap:.5rem"><button class="btn btn-sm btn-success" onclick="approveReview(${r.id})">Approve</button><button class="btn btn-sm btn-danger" onclick="deleteReview(${r.id})">Delete</button></td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:1.5rem">No pending reviews</td></tr>';
+            }
+            async function approveReview(id){await authFetch(`/testimonials/${id}/approve`,{method:'PUT'});loadReviews();toast('✓ Approved');}
+            async function deleteReview(id){await authFetch(`/testimonials/${id}`,{method:'DELETE'});loadReviews();toast('✓ Deleted');}
+
+            // ── USERS ────────────────────────────────────
+            async function loadUsersTable(){
+                const search=document.getElementById('userSearch')?.value||'';
+                const stats=await authFetch('/users/stats');
+                if(stats?.data){
+                    document.getElementById('u-total').textContent=stats.data.total;
+                    document.getElementById('u-verified').textContent=stats.data.verified;
+                    document.getElementById('u-today').textContent=stats.data.today;
+                }
+                const d=await authFetch('/users'+(search?'?search='+encodeURIComponent(search):''));
+                const users=d?.data||[];
+                document.getElementById('usersTable').innerHTML=users.length
+                    ?users.map(u=>`<tr><td><strong>${u.name||'—'}</strong></td><td>${u.email||'—'}</td><td>${u.phone||'—'}</td><td>${u.isVerified?'<span class="badge badge-green">Verified</span>':'<span class="badge badge-orange">Unverified</span>'}</td><td>${new Date(u.createdAt).toLocaleDateString()}</td><td style="display:flex;gap:.5rem"><button class="btn btn-sm btn-blue" onclick="viewUserOrders(${u.id},'${(u.name||'User').replace(/'/g,'')}')">🛒</button><button class="btn btn-sm btn-outline" data-user='${JSON.stringify(u).replace(/'/g,"&#39;")}' onclick="openUserModal(this)">Edit</button><button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id})">Delete</button></td></tr>`).join('')
+                    :'<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">No users found</td></tr>';
+            }
+            function openUserModal(btn){
+                const u=JSON.parse(btn.getAttribute('data-user'));
+                document.getElementById('u-id').value=u.id;
+                document.getElementById('u-name').value=u.name||'';
+                document.getElementById('u-email').value=u.email||'';
+                document.getElementById('u-phone').value=u.phone||'';
+                document.getElementById('u-verified-sel').value=u.isVerified?'true':'false';
+                openModal('userModal');
+            }
+            async function saveUser(){
+                const id=document.getElementById('u-id').value;
+                const body={name:document.getElementById('u-name').value,email:document.getElementById('u-email').value,phone:document.getElementById('u-phone').value,isVerified:document.getElementById('u-verified-sel').value==='true'};
+                await authFetch(`/users/${id}`,{method:'PUT',body:JSON.stringify(body)});
+                closeModal('userModal');loadUsersTable();toast('✓ User updated');
+            }
+            async function deleteUser(id){if(!confirm('Delete user?'))return;await authFetch(`/users/${id}`,{method:'DELETE'});loadUsersTable();toast('✓ Deleted');}
+            async function viewUserOrders(userId,userName){
+                const d=await authFetch(`/users/${userId}/orders`);
+                const orders=d?.data||[];
+                if(!orders.length){toast('No orders for '+userName);return;}
+                alert(userName+"'s Orders:\n\n"+orders.map(o=>o.items+' — ₹'+o.totalAmount+' — '+o.status).join('\n'));
+            }
+
+            // ── SETTINGS ────────────────────────────────
+            const SETTING_LABELS={cafe_name:'Café Name',cafe_address:'Address',cafe_phone:'Phone',cafe_email:'Email',cafe_hours:'Opening Hours',cafe_about:'About Text'};
+            async function loadSettings(){
+                const d=await pubFetch('/settings');
+                const s=d?.data||{};
+                document.getElementById('settingsForm').innerHTML=Object.entries(SETTING_LABELS).map(([k,l])=>`<div><label style="font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:.4rem">${l}</label><div style="display:flex;gap:.7rem"><input id="s-${k}" value="${s[k]||''}" style="flex:1;padding:.7rem .9rem;border:1px solid var(--border);border-radius:6px;font-family:var(--sans);font-size:.9rem;outline:none"><button class="btn btn-primary btn-sm" onclick="saveSetting('${k}')">Save</button></div></div>`).join('');
+            }
+            async function saveSetting(key){
+                const val=document.getElementById(`s-${key}`).value;
+                await authFetch(`/settings/${key}`,{method:'PUT',body:JSON.stringify(val)});
+                toast('✓ Setting saved');
+            }
+
+            // ── ENTER KEY ───────────────────────────────
+            document.addEventListener('DOMContentLoaded',()=>{
+                const s=document.getElementById('userSearch');
+                if(s)s.addEventListener('keydown',e=>{if(e.key==='Enter')loadUsersTable();});
+            });
+            document.addEventListener('keydown',e=>{
+                if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')doLogin();
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,471 @@
+﻿@page
+@model coffee_shop.frontend.LoginModel
+@{
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Brew & Bloom</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body { background:#080808; color:#f5f1ea; font-family:'Manrope',sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+        body::before { content:''; position:fixed; inset:0; background-image:url("https://www.transparenttextures.com/patterns/asfalt-dark.png"); opacity:.07; pointer-events:none; z-index:0; }
+        :root { --gold:#C6A46C; --muted:rgba(255,255,255,.6); }
+
+        /* NAV */
+        nav { position:fixed; top:0; width:100%; z-index:100; padding:1.2rem 7%; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,.3); backdrop-filter:blur(20px); border-bottom:1px solid rgba(255,255,255,.05); }
+        .logo { font-family:'Playfair Display',serif; font-size:1.5rem; color:#fff; }
+        .nav-back { color:rgba(255,255,255,.6); font-size:.82rem; text-transform:uppercase; letter-spacing:.15em; text-decoration:none; transition:.3s; }
+        .nav-back:hover { color:var(--gold); }
+
+        /* MAIN */
+        .page { flex:1; display:flex; align-items:center; justify-content:center; padding:7rem 1.5rem 3rem; position:relative; z-index:1; }
+        .login-wrap { width:100%; max-width:440px; }
+
+        /* CARD */
+        .login-card { background:rgba(255,255,255,.03); backdrop-filter:blur(30px); border:1px solid rgba(255,255,255,.08); border-radius:28px; padding:2.5rem; box-shadow:0 30px 80px rgba(0,0,0,.5); }
+        .card-icon { width:60px; height:60px; border-radius:50%; background:linear-gradient(135deg,#1a0a00,var(--gold)); display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:1.5rem; }
+        .card-title { font-family:'Playfair Display',serif; font-size:2rem; margin-bottom:.4rem; }
+        .card-sub { color:var(--muted); font-size:.88rem; line-height:1.7; margin-bottom:2rem; }
+
+        /* STEPS */
+        .step { display:none; }
+        .step.active { display:block; animation:stepIn .4s cubic-bezier(.16,1,.3,1); }
+        @@keyframes stepIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:none} }
+
+        /* FORM */
+        .form-group { margin-bottom:1.2rem; }
+        .form-group label { display:block; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:.5rem; }
+        .input-wrap { position:relative; }
+        .input-wrap input { width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:.9rem 1.1rem; color:#fff; font-family:'Manrope',sans-serif; font-size:.95rem; outline:none; transition:all .3s; }
+        .input-wrap input:focus { border-color:var(--gold); background:rgba(198,164,108,.06); box-shadow:0 0 0 3px rgba(198,164,108,.1); }
+        .input-wrap input::placeholder { color:rgba(255,255,255,.25); }
+        .input-icon { position:absolute; right:1rem; top:50%; transform:translateY(-50%); font-size:1.1rem; pointer-events:none; }
+
+        /* OTP BOXES */
+        .otp-wrap { display:flex; gap:.6rem; justify-content:center; margin:1.5rem 0; }
+        .otp-wrap input { width:48px; height:56px; text-align:center; font-size:1.4rem; font-weight:600; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:10px; color:#fff; outline:none; transition:all .3s; font-family:'Manrope',sans-serif; }
+        .otp-wrap input:focus { border-color:var(--gold); background:rgba(198,164,108,.08); box-shadow:0 0 0 3px rgba(198,164,108,.1); }
+        .otp-wrap input.filled { border-color:rgba(198,164,108,.5); }
+
+        /* CONTACT DISPLAY */
+        .contact-display { background:rgba(198,164,108,.08); border:1px solid rgba(198,164,108,.2); border-radius:10px; padding:.8rem 1.1rem; display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; }
+        .contact-display span { color:var(--gold); font-size:.9rem; }
+        .contact-display button { background:none; border:none; color:rgba(255,255,255,.5); font-size:.78rem; cursor:pointer; text-decoration:underline; font-family:'Manrope',sans-serif; transition:.3s; }
+        .contact-display button:hover { color:var(--gold); }
+
+        /* TIMER */
+        .resend-wrap { text-align:center; margin-top:1rem; font-size:.83rem; color:var(--muted); }
+        .resend-btn { background:none; border:none; color:var(--gold); cursor:pointer; font-family:'Manrope',sans-serif; font-size:.83rem; text-decoration:underline; display:none; }
+        .resend-btn.show { display:inline; }
+        #timer { color:var(--gold); font-weight:600; }
+
+        /* BUTTONS */
+        .btn-main { width:100%; background:var(--gold); color:#000; border:none; padding:1rem; border-radius:100px; font-family:'Manrope',sans-serif; font-size:.95rem; font-weight:700; cursor:pointer; transition:all .4s; margin-top:.5rem; display:flex; align-items:center; justify-content:center; gap:.5rem; }
+        .btn-main:hover { transform:translateY(-3px); box-shadow:0 12px 35px rgba(198,164,108,.4); }
+        .btn-main:disabled { opacity:.6; cursor:not-allowed; transform:none; box-shadow:none; }
+        .btn-spinner { width:18px; height:18px; border:2px solid rgba(0,0,0,.3); border-top-color:#000; border-radius:50%; animation:spin .7s linear infinite; display:none; }
+        .btn-main.loading .btn-spinner { display:block; }
+        .btn-main.loading .btn-text { opacity:.7; }
+        @@keyframes spin { to{transform:rotate(360deg)} }
+
+        /* MSG */
+        .msg { padding:.8rem 1rem; border-radius:10px; font-size:.83rem; margin-top:1rem; display:none; }
+        .msg.success { display:block; background:rgba(100,200,100,.1); color:#8aca8a; border:1px solid rgba(100,200,100,.2); }
+        .msg.error   { display:block; background:rgba(200,100,100,.1); color:#ca8a8a; border:1px solid rgba(200,100,100,.2); }
+
+        /* DIVIDER */
+        .divider { display:flex; align-items:center; gap:1rem; margin:1.5rem 0; color:rgba(255,255,255,.2); font-size:.75rem; }
+        .divider::before,.divider::after { content:''; flex:1; height:1px; background:rgba(255,255,255,.08); }
+
+        /* PROGRESS */
+        .progress-wrap { display:flex; gap:.5rem; margin-bottom:2rem; }
+        .progress-step { flex:1; height:3px; border-radius:100px; background:rgba(255,255,255,.1); transition:.4s; }
+        .progress-step.done { background:var(--gold); }
+        .progress-step.active { background:rgba(198,164,108,.5); }
+
+        /* NAME HINT */
+        .name-hint { font-size:.78rem; color:rgba(255,255,255,.4); margin-top:.4rem; }
+
+        /* WELCOME */
+        .welcome-icon { font-size:3rem; text-align:center; margin-bottom:1rem; animation:popIn .5s cubic-bezier(.16,1,.3,1); }
+        @@keyframes popIn { from{transform:scale(0)} to{transform:scale(1)} }
+        .welcome-name { font-family:'Playfair Display',serif; font-size:1.8rem; text-align:center; margin-bottom:.5rem; }
+        .welcome-sub { text-align:center; color:var(--muted); font-size:.88rem; margin-bottom:2rem; }
+
+        /* FOOTER */
+        .login-footer { text-align:center; margin-top:1.5rem; font-size:.8rem; color:rgba(255,255,255,.3); }
+        .login-footer a { color:rgba(198,164,108,.7); text-decoration:none; }
+        .login-footer a:hover { color:var(--gold); }
+
+        /* CURSOR */
+        .cursor-glow { width:350px; height:350px; border-radius:50%; position:fixed; background:radial-gradient(circle,rgba(198,164,108,.08),transparent 70%); pointer-events:none; z-index:0; transform:translate(-50%,-50%); }
+    </style>
+</head>
+<body>
+
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<nav>
+    <div class="logo">Brew & Bloom</div>
+    <a href="/" class="nav-back">← Back to Menu</a>
+</nav>
+
+<div class="page">
+    <div class="login-wrap">
+
+        <div class="progress-wrap">
+            <div class="progress-step active" id="prog-1"></div>
+            <div class="progress-step"        id="prog-2"></div>
+            <div class="progress-step"        id="prog-3"></div>
+        </div>
+
+        <div class="login-card">
+            <div class="card-icon">☕</div>
+
+            <!-- STEP 1 -->
+            <div class="step active" id="step1">
+                <h2 class="card-title">Welcome Back</h2>
+                <p class="card-sub">Enter your email to receive a one-time login code. No password needed!</p>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <div class="input-wrap">
+                        <input type="email" id="contactInput" placeholder="you@example.com" autocomplete="email">
+                        <span class="input-icon">✉️</span>
+                    </div>
+                </div>
+                <div class="msg" id="msg1"></div>
+                <button class="btn-main" id="sendOtpBtn" onclick="sendOtp()">
+                    <div class="btn-spinner"></div>
+                    <span class="btn-text">Send OTP →</span>
+                </button>
+                <div class="divider">New here? We'll create your account automatically</div>
+                <p style="text-align:center;font-size:.8rem;color:rgba(255,255,255,.3)">
+                    Your data is safe. We never share your information.
+                </p>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="step" id="step2">
+                <h2 class="card-title">Enter OTP</h2>
+                <p class="card-sub">We sent a 6-digit code to</p>
+                <div class="contact-display">
+                    <span id="contactDisplay">—</span>
+                    <button onclick="goBack()">Change</button>
+                </div>
+                <div class="form-group">
+                    <label>One-Time Password</label>
+                    <div class="otp-wrap" id="otpWrap">
+                        <input type="text" maxlength="1" class="otp-digit" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-digit" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-digit" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-digit" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-digit" inputmode="numeric">
+                        <input type="text" maxlength="1" class="otp-digit" inputmode="numeric">
+                    </div>
+                </div>
+                <div class="resend-wrap">
+                    <span id="timerWrap">Resend in <span id="timer">60</span>s</span>
+                    <button class="resend-btn" id="resendBtn" onclick="resendOtp()">Resend OTP</button>
+                </div>
+                <div class="msg" id="msg2"></div>
+                <button class="btn-main" id="verifyOtpBtn" onclick="verifyOtp()">
+                    <div class="btn-spinner"></div>
+                    <span class="btn-text">Verify & Login →</span>
+                </button>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="step" id="step3">
+                <h2 class="card-title">One Last Step</h2>
+                <p class="card-sub">Tell us your name to complete your account setup.</p>
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <div class="input-wrap">
+                        <input type="text" id="nameInput" placeholder="e.g. Prit Patel" autocomplete="name">
+                        <span class="input-icon">👤</span>
+                    </div>
+                    <p class="name-hint">This will appear on your orders</p>
+                </div>
+                <div class="msg" id="msg3"></div>
+                <button class="btn-main" id="registerBtn" onclick="completeRegister()">
+                    <div class="btn-spinner"></div>
+                    <span class="btn-text">Create Account →</span>
+                </button>
+            </div>
+
+            <!-- STEP 4 -->
+            <div class="step" id="step4">
+                <div class="welcome-icon">🎉</div>
+                <h2 class="welcome-name" id="welcomeName">Welcome!</h2>
+                <p class="welcome-sub">You are now logged in. Redirecting to menu...</p>
+                <div style="text-align:center;margin-top:1rem">
+                    <div style="width:40px;height:40px;border:3px solid rgba(198,164,108,.3);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="login-footer">
+            <a href="/">← Back to Home</a> &nbsp;·&nbsp;
+            By continuing you agree to our <a href="#">Terms</a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const API = window.location.origin + "/api";
+    let currentContact = "";
+    let timerInterval = null;
+    let pendingOtp = "";
+
+    // CURSOR
+    const glow = document.getElementById("cursorGlow");
+    window.addEventListener("mousemove", e => {
+        glow.style.left = e.clientX + "px";
+        glow.style.top = e.clientY + "px";
+    });
+
+    // PROGRESS
+    function setProgress(step) {
+        [1, 2, 3].forEach(i => {
+            const el = document.getElementById("prog-" + i);
+            el.className = "progress-step" + (i < step ? " done" : i === step ? " active" : "");
+        });
+    }
+
+    // SHOW STEP
+    function showStep(n) {
+        document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+        document.getElementById("step" + n).classList.add("active");
+        setProgress(n);
+    }
+
+    // GO BACK
+    function goBack() {
+        clearInterval(timerInterval);
+        showStep(1);
+        document.getElementById("msg1").className = "msg";
+    }
+
+    // SET LOADING
+    function setLoading(btnId, loading) {
+        const btn = document.getElementById(btnId);
+        btn.disabled = loading;
+        btn.classList.toggle("loading", loading);
+    }
+
+    // SHOW MSG
+    function showMsg(id, type, text) {
+        const el = document.getElementById(id);
+        el.className = "msg " + type;
+        el.textContent = text;
+    }
+
+    // STEP 1: SEND OTP
+    async function sendOtp() {
+        const contact = document.getElementById("contactInput").value.trim();
+        if (!contact) { showMsg("msg1", "error", "Please enter your email"); return; }
+        if (!contact.includes("@@")) { showMsg("msg1", "error", "Please enter a valid email"); return; }
+
+        setLoading("sendOtpBtn", true);
+        document.getElementById("msg1").className = "msg";
+
+        try {
+            const r = await fetch(`${API}/clientauth/send-otp`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ contact })
+            });
+            const d = await r.json();
+            if (d.success) {
+                currentContact = contact;
+                document.getElementById("contactDisplay").textContent = contact;
+                showStep(2);
+                startTimer();
+                setTimeout(() => {
+                    document.querySelector(".otp-digit").focus();
+                }, 400);
+            } else {
+                showMsg("msg1", "error", d.message || "Failed to send OTP");
+            }
+        } catch {
+            showMsg("msg1", "error", "Network error. Please try again.");
+        }
+        setLoading("sendOtpBtn", false);
+    }
+
+    // OTP INPUT LOGIC
+    document.querySelectorAll(".otp-digit").forEach((input, i, all) => {
+        input.addEventListener("input", function () {
+            this.value = this.value.replace(/\D/g, "");
+            if (this.value && i < all.length - 1) all[i + 1].focus();
+            this.classList.toggle("filled", !!this.value);
+            if (getOtpValue().length === 6) {
+                setTimeout(verifyOtp, 200);
+            }
+        });
+        input.addEventListener("keydown", function (e) {
+            if (e.key === "Backspace" && !this.value && i > 0) {
+                all[i - 1].focus();
+                all[i - 1].value = "";
+                all[i - 1].classList.remove("filled");
+            }
+        });
+        input.addEventListener("paste", function (e) {
+            const paste = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+            if (paste.length === 6) {
+                e.preventDefault();
+                all.forEach((inp, idx) => {
+                    inp.value = paste[idx] || "";
+                    inp.classList.toggle("filled", !!inp.value);
+                });
+                all[5].focus();
+                setTimeout(verifyOtp, 200);
+            }
+        });
+    });
+
+    function getOtpValue() {
+        return [...document.querySelectorAll(".otp-digit")].map(i => i.value).join("");
+    }
+
+    function clearOtp() {
+        document.querySelectorAll(".otp-digit").forEach(i => {
+            i.value = "";
+            i.classList.remove("filled");
+        });
+    }
+
+    // TIMER
+    function startTimer() {
+        let secs = 60;
+        document.getElementById("timer").textContent = secs;
+        document.getElementById("timerWrap").style.display = "inline";
+        document.getElementById("resendBtn").classList.remove("show");
+
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            secs--;
+            document.getElementById("timer").textContent = secs;
+            if (secs <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById("timerWrap").style.display = "none";
+                document.getElementById("resendBtn").classList.add("show");
+            }
+        }, 1000);
+    }
+
+    async function resendOtp() {
+        document.getElementById("resendBtn").classList.remove("show");
+        clearOtp();
+        document.getElementById("msg2").className = "msg";
+        await sendOtpToContact(currentContact);
+        startTimer();
+    }
+
+    async function sendOtpToContact(contact) {
+        await fetch(`${API}/clientauth/send-otp`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ contact })
+        });
+    }
+
+    // STEP 2: VERIFY OTP
+    async function verifyOtp() {
+        const otp = getOtpValue();
+        if (otp.length !== 6) {
+            showMsg("msg2", "error", "Please enter all 6 digits");
+            return;
+        }
+
+        setLoading("verifyOtpBtn", true);
+        document.getElementById("msg2").className = "msg";
+
+        try {
+            const r = await fetch(`${API}/clientauth/verify-otp`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ contact: currentContact, otp })
+            });
+            const d = await r.json();
+
+            if (d.success) {
+                clearInterval(timerInterval);
+                localStorage.setItem("client_token",   d.data.token);
+                localStorage.setItem("client_name",    d.data.name);
+                localStorage.setItem("client_contact", d.data.contact);
+                localStorage.setItem("client_id",      d.data.userId);
+
+                document.getElementById("welcomeName").textContent = "Welcome, " + d.data.name + "!";
+                showStep(4);
+                setProgress(3);
+                setTimeout(() => { window.location.href = "/"; }, 2000);
+            } else {
+                showMsg("msg2", "error", d.message || "Invalid OTP. Please try again.");
+                clearOtp();
+                document.querySelector(".otp-digit").focus();
+            }
+        } catch {
+            showMsg("msg2", "error", "Network error. Please try again.");
+        }
+        setLoading("verifyOtpBtn", false);
+    }
+
+    // STEP 3: COMPLETE REGISTER
+    async function completeRegister() {
+        const name = document.getElementById("nameInput").value.trim();
+        if (!name) { showMsg("msg3", "error", "Please enter your name"); return; }
+
+        setLoading("registerBtn", true);
+
+        try {
+            const r = await fetch(`${API}/clientauth/verify-otp`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ contact: currentContact, otp: pendingOtp, name })
+            });
+            const d = await r.json();
+
+            if (d.success) {
+                localStorage.setItem("client_token",   d.data.token);
+                localStorage.setItem("client_name",    d.data.name);
+                localStorage.setItem("client_contact", d.data.contact);
+                localStorage.setItem("client_id",      d.data.userId);
+
+                document.getElementById("welcomeName").textContent = "Welcome, " + d.data.name + "!";
+                showStep(4);
+                setProgress(3);
+                setTimeout(() => { window.location.href = "/"; }, 2000);
+            } else {
+                showMsg("msg3", "error", d.message || "Something went wrong.");
+            }
+        } catch {
+            showMsg("msg3", "error", "Network error.");
+        }
+        setLoading("registerBtn", false);
+    }
+
+    // ENTER KEY
+    document.getElementById("contactInput").addEventListener("keydown", e => {
+        if (e.key === "Enter") sendOtp();
+    });
+
+    // CHECK ALREADY LOGGED IN
+    window.addEventListener("load", () => {
+        const token = localStorage.getItem("client_token");
+        const name = localStorage.getItem("client_name");
+        if (token && name) {
+            window.location.href = "/";
+        }
+    });
+</script>
+</body>
+</html>
