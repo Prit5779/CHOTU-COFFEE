@@ -49,7 +49,8 @@ public partial class Program
             app.UseDeveloperExceptionPage();
         }
 
-        app.UseHttpsRedirection();
+        // app.UseHttpsRedirection();
+        
         app.UseStaticFiles();
         app.UseRouting();
         app.UseCors("AllowFrontend");
